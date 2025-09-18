@@ -13,47 +13,353 @@
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+        
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent-orange: #f97316;
+            --accent-blue: #3b82f6;
+            --border-color: #475569;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --glass-bg: rgba(51, 65, 85, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent-orange: #ea580c;
+            --accent-blue: #2563eb;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(0, 0, 0, 0.1);
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
         }
-        .rangoli-pattern {
-            background-image: radial-gradient(circle, #ff993355 1px, transparent 1px);
+
+        .theme-bg-primary { background-color: var(--bg-primary); }
+        .theme-bg-secondary { background-color: var(--bg-secondary); }
+        .theme-bg-card { background-color: var(--bg-card); }
+        .theme-text-primary { color: var(--text-primary); }
+        .theme-text-secondary { color: var(--text-secondary); }
+        .theme-text-muted { color: var(--text-muted); }
+        .theme-border { border-color: var(--border-color); }
+        .theme-shadow { box-shadow: 0 10px 25px var(--shadow-color); }
+
+        /* Enhanced 3D Floating Navbar */
+        .floating-navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 12px 24px;
+            box-shadow: 
+                0 20px 40px var(--shadow-color),
+                0 15px 25px var(--shadow-color),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            transform-style: preserve-3d;
+        }
+
+        .floating-navbar:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 
+                0 30px 60px var(--shadow-color),
+                0 20px 35px var(--shadow-color),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .navbar-link:hover {
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            color: white;
+            transform: translateY(-1px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3);
+        }
+
+        .navbar-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .navbar-link:hover::before {
+            left: 100%;
+        }
+
+        /* Brand Logo in Navbar with External SVG Support */
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-right: 24px;
+            padding: 4px;
+        }
+
+        .navbar-logo-container {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .navbar-logo-container:hover {
+            transform: scale(1.1) rotate(3deg);
+            box-shadow: 0 8px 20px var(--shadow-color);
+        }
+
+        .navbar-logo {
+            width: 24px;
+            height: 24px;
+            transition: all 0.3s ease;
+            filter: brightness(1.1);
+        }
+
+        .navbar-logo-container:hover .navbar-logo {
+            transform: scale(1.1);
+        }
+
+        /* Shine effect for logo container */
+        .navbar-logo-container::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: logoShine 4s linear infinite;
+        }
+
+        @keyframes logoShine {
+            0% { transform: rotate(45deg) translateY(-100%); }
+            100% { transform: rotate(45deg) translateY(100%); }
+        }
+
+        .navbar-brand-text {
+            font-weight: 700;
+            font-size: 18px;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        /* 3D Dropdown Menus */
+        .dropdown-menu {
+            position: absolute;
+            top: 120%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(51, 65, 85, 0.9);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            min-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 15px 25px rgba(0,0,0,0.25);
+            transform-style: preserve-3d;
+        }
+
+        .navbar-item:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0) rotateX(0deg);
+        }
+
+        .dropdown-link {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            margin-bottom: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dropdown-link:hover {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(59, 130, 246, 0.1));
+            color: var(--text-primary);
+            transform: translateX(5px);
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            min-width: 520px;
+        }
+
+        .product-item {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            transform-style: preserve-3d;
+        }
+
+        .product-item:hover {
+            transform: translateY(-4px) rotateX(5deg);
+            box-shadow: 0 15px 30px var(--shadow-color);
+            border-color: var(--accent-orange);
+        }
+
+        .product-image {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .product-content h3 {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+            margin: 0 0 4px 0;
+        }
+
+        .product-content p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Dark theme rangoli pattern */
+        .rangoli-pattern-dark {
+            background-image: radial-gradient(circle, rgba(249, 115, 22, 0.1) 1px, transparent 1px);
             background-size: 30px 30px;
         }
+
+        /* Light theme rangoli pattern */
+        .rangoli-pattern-light {
+            background-image: radial-gradient(circle, rgba(249, 115, 22, 0.08) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
         .btn-3d {
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px var(--shadow-color);
         }
         .btn-3d:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px var(--shadow-color);
         }
         .btn-3d:active {
             transform: translateY(1px);
         }
+
         .feature-card {
             transition: all 0.3s ease;
             perspective: 1000px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
         }
         .feature-card:hover {
             transform: translateY(-10px) rotateX(5deg);
         }
+
         .avatar-3d {
             border-radius: 50%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 25px var(--shadow-color);
             transition: all 0.3s ease;
         }
         .avatar-3d:hover {
             transform: scale(1.05) rotateY(10deg);
         }
+
         .speech-bubble {
             position: relative;
-            background: white;
+            background: var(--bg-card);
+            color: var(--text-primary);
             border-radius: 1rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px var(--shadow-color);
+            border: 1px solid var(--border-color);
         }
+
         .speech-bubble:after {
             content: '';
             position: absolute;
@@ -61,32 +367,22 @@
             left: 50%;
             border-width: 10px 10px 0;
             border-style: solid;
-            border-color: white transparent;
+            border-color: var(--bg-card) transparent;
             transform: translateX(-50%);
         }
 
-        /* Logo shine animation */
-        @keyframes shine {
-            0% { background-position: -400px 0; }
-            100% { background-position: 400px 0; }
-        }
-        .logo-shine {
-            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
-            background-size: 200% 100%;
-            animation: shine 2s linear infinite;
-        }
-
-        /* Draggable 3D calendar container */
+        /* Calendar 3D styling */
         #interactive-calendar {
             width: 400px;
             height: 300px;
             margin: 2rem auto;
             cursor: grab;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 20px var(--shadow-color);
             border-radius: 1rem;
-            background-color: white;
+            background-color: var(--bg-card);
             overflow: hidden;
             position: relative;
+            border: 1px solid var(--border-color);
         }
         #interactive-calendar canvas {
             border-radius: 1rem;
@@ -115,61 +411,328 @@
             transform: translateY(0);
         }
 
+        /* Theme toggle button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px var(--shadow-color);
+        }
+
         /* Language switch styling */
+        .lang-switch {
+            background-color: var(--bg-card);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
         .lang-switch.active {
             font-weight: 700;
-            background-color: #ff9933;
+            background-color: var(--accent-orange);
             color: white;
+        }
+
+        /* Hero gradient overlay for dark theme */
+        .hero-gradient-dark {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+        }
+
+        .hero-gradient-light {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.8) 100%);
+        }
+
+        /* Footer styling */
+        .footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* CTA section gradient */
+        .cta-gradient {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+        }
+
+        .lang-switcher-container:hover .lang-switcher-options {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .floating-navbar {
+                left: 10px;
+                right: 10px;
+                transform: none;
+                border-radius: 20px;
+                padding: 8px 16px;
+            }
+            
+            .floating-navbar:hover {
+                transform: translateY(-2px);
+            }
+            
+            .navbar-menu {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            
+            .navbar-brand {
+                margin-right: 10px;
+            }
+            
+            .navbar-brand-text {
+                display: none;
+            }
+            
+            .navbar-logo-container {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .navbar-logo {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .dropdown-menu {
+                min-width: 200px;
+                left: 0;
+                transform: translateY(10px);
+            }
+            
+            .navbar-item:hover .dropdown-menu {
+                transform: translateY(0);
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+                min-width: 200px;
+            }
         }
     </style>
 </head>
-<body class="rangoli-pattern">
-    <!-- Navbar -->
-    <nav class="bg-white shadow-lg">
+<body class="rangoli-pattern-dark" data-theme="dark">
+    
+    <!-- Floating Action Buttons -->
+    <div class="fixed bottom-4 right-4 z-50 flex flex-col items-center gap-4">
+        <!-- Language Switcher -->
+        <div class="lang-switcher-container relative">
+            <button class="lang-switcher-button w-12 h-12 rounded-full bg-gray-800 text-white flex items-center justify-center shadow-lg">
+                <i data-feather="globe"></i>
+            </button>
+            <div class="lang-switcher-options absolute bottom-14 right-0 w-40 bg-gray-800 rounded-lg shadow-lg py-2 opacity-0 invisible transition-all duration-300">
+                <a href="#" data-lang="en" class="lang-switch block px-4 py-2 text-sm text-white hover:bg-gray-700">English</a>
+                <a href="#" data-lang="hi" class="lang-switch block px-4 py-2 text-sm text-white hover:bg-gray-700">हिंदी</a>
+                <a href="#" data-lang="ta" class="lang-switch block px-4 py-2 text-sm text-white hover:bg-gray-700">தமிழ்</a>
+            </div>
+        </div>
+
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle w-12 h-12 rounded-full bg-gray-800 text-white flex items-center justify-center shadow-lg" id="themeToggle" title="Toggle Theme">
+            <i data-feather="sun" id="themeIcon"></i>
+        </button>
+    </div>
+
+    <!-- Enhanced 3D Floating Navbar with External SVG Logo -->
+    <nav class="floating-navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+            <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
-                      <div class="w-10 h-10 rounded-full bg-gradient-to-r from-orange-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl relative overflow-hidden">
-                        MSG
-                        <span class="logo-shine absolute top-0 left-0 w-full h-full mix-blend-screen pointer-events-none"></span>
-                      </div>
-                      <span class="ml-2 text-xl font-bold text-gray-800">MeetSetGo</span>
+                    <div class="flex-shrink-0">
+                        <a href="/" class="navbar-brand">
+                            <div class="navbar-logo-container">
+                                <!-- External SVG Logo - Replace 'logo.svg' with your actual logo file path -->
+                                <img src="/logo_dark.svg" alt="MeetSetGo Logo" class="navbar-logo" />
+                            </div>
+                            <span class="navbar-brand-text">MeetSetGo</span>
+                        </a>
                     </div>
                 </div>
-                <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
-                    <a href="#" class="text-gray-900 hover:text-orange-500 px-3 py-2 text-sm font-medium">Features</a>
-                    <a href="#" class="text-gray-900 hover:text-orange-500 px-3 py-2 text-sm font-medium">Pricing</a>
-                    <a href="#" class="text-gray-900 hover:text-orange-500 px-3 py-2 text-sm font-medium">Resources</a>
-                    <a href="#" class="text-gray-900 hover:text-orange-500 px-3 py-2 text-sm font-medium">About</a>
-                    <button class="ml-4 bg-gradient-to-r from-orange-500 to-blue-600 text-white px-4 py-2 rounded-full btn-3d font-medium">Start Free Trial</button>
+                <div class="hidden md:block">
+                    <ul class="navbar-menu">
+                        <li class="navbar-item">
+                            <a href="#features" class="navbar-link">
+                                <i data-feather="layers"></i>
+                                Features
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="#whatsapp" class="dropdown-link">
+                                    <i data-feather="message-circle" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                                    WhatsApp Integration
+                                </a>
+                                <a href="#payments" class="dropdown-link">
+                                    <i data-feather="credit-card" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                                    UPI Payments
+                                </a>
+                                <a href="#reminders" class="dropdown-link">
+                                    <i data-feather="bell" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                                    Smart Reminders
+                                </a>
+                                <a href="#templates" class="dropdown-link">
+                                    <i data-feather="template" style="width: 16px; height: 16px; margin-right: 8px;"></i>
+                                    Industry Templates
+                                </a>
+                            </div>
+                        </li>
+                        
+                        <li class="navbar-item">
+                            <a href="#products" class="navbar-link">
+                                <i data-feather="grid"></i>
+                                Solutions
+                            </a>
+                            <div class="dropdown-menu">
+                                <div class="products-grid">
+                                    <div class="product-item">
+                                        <div class="product-image">
+                                            <i data-feather="scissors"></i>
+                                        </div>
+                                        <div class="product-content">
+                                            <h3>Salon & Spa</h3>
+                                            <p>Complete booking solution for beauty and wellness businesses</p>
+                                        </div>
+                                    </div>
+                                    <div class="product-item">
+                                        <div class="product-image">
+                                            <i data-feather="heart"></i>
+                                        </div>
+                                        <div class="product-content">
+                                            <h3>Clinics</h3>
+                                            <p>Healthcare appointment management with patient forms</p>
+                                        </div>
+                                    </div>
+                                    <div class="product-item">
+                                        <div class="product-image">
+                                            <i data-feather="book-open"></i>
+                                        </div>
+                                        <div class="product-content">
+                                            <h3>Education</h3>
+                                            <p>Class scheduling and student management system</p>
+                                        </div>
+                                    </div>
+                                    <div class="product-item">
+                                        <div class="product-image">
+                                            <i data-feather="activity"></i>
+                                        </div>
+                                        <div class="product-content">
+                                            <h3>Fitness</h3>
+                                            <p>Gym and studio booking with membership management</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li class="navbar-item">
+                            <a href="#pricing" class="navbar-link">
+                                <i data-feather="dollar-sign"></i>
+                                Pricing
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="#starter" class="dropdown-link">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span>Starter</span>
+                                        <span style="color: var(--accent-orange); font-weight: 600;">₹299/month</span>
+                                    </div>
+                                    <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Perfect for small businesses</p>
+                                </a>
+                                <a href="#growth" class="dropdown-link">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span>Growth</span>
+                                        <span style="color: var(--accent-orange); font-weight: 600;">₹799/month</span>
+                                    </div>
+                                    <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">For growing teams</p>
+                                </a>
+                                <a href="#scale" class="dropdown-link">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span>Scale</span>
+                                        <span style="color: var(--accent-orange); font-weight: 600;">₹1,499/month</span>
+                                    </div>
+                                    <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Advanced features</p>
+                                </a>
+                                <a href="#enterprise" class="dropdown-link">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span>Enterprise</span>
+                                        <span style="color: var(--accent-blue); font-weight: 600;">Custom</span>
+                                    </div>
+                                    <p style="font-size: 12px; color: var(--text-muted); margin: 4px 0 0 0;">Tailored solutions</p>
+                                </a>
+                            </div>
+                        </li>
+                        
+                        <li class="navbar-item">
+                            <a href="#contact" class="navbar-link">
+                                <i data-feather="phone"></i>
+                                Contact
+                            </a>
+                        </li>
+                        
+                        <li class="navbar-item">
+                            <a href="#trial" class="navbar-link" style="background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue)); color: white; font-weight: 600;">
+                                <i data-feather="rocket"></i>
+                                Free Trial
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                <div class="-mr-2 flex items-center md:hidden">
-                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
-                        <i data-feather="menu"></i>
+                <div class="-mr-2 flex md:hidden">
+                    <button id="mobile-menu-button" type="button" class="bg-gray-900 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
             </div>
         </div>
+
+        <div class="md:hidden" id="mobile-menu">
+            <ul class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <li><a href="#features" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Features</a></li>
+                <li><a href="#products" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Solutions</a></li>
+                <li><a href="#pricing" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Pricing</a></li>
+                <li><a href="#contact" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contact</a></li>
+                <li><a href="#trial" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Free Trial</a></li>
+            </ul>
+        </div>
     </nav>
 
     <!-- Hero Section with 3D Animation and Interactive Calendar -->
-    <div id="vanta-globe" class="relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-b from-orange-50/50 to-blue-50/50"></div>
+    <div id="vanta-globe" class="relative overflow-hidden" style="margin-top: 80px;">
+        <div class="absolute inset-0 hero-gradient-dark" id="heroGradient"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10">
             <div class="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
                 <div class="mb-12 lg:mb-0" data-aos="fade-right">
-                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    <h1 class="text-4xl md:text-5xl font-bold theme-text-primary mb-6">
                         Empowering India's Local Businesses with <span class="text-orange-500">Smart Scheduling</span>
                     </h1>
-                    <p class="text-lg text-gray-600 mb-8">
+                    <p class="text-lg theme-text-secondary mb-8">
                         Transform your appointment management with our WhatsApp-first, UPI-powered scheduling solution designed for Indian SMEs.
                     </p>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                         <button class="bg-gradient-to-r from-orange-500 to-blue-600 text-white px-6 py-3 rounded-full btn-3d font-medium hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                             Start Your Free Trial
                         </button>
-                        <button class="border-2 border-orange-500 text-orange-500 px-6 py-3 rounded-full font-medium hover:bg-orange-50 transition-all">
+                        <button class="border-2 border-orange-500 text-orange-500 px-6 py-3 rounded-full font-medium hover:bg-orange-50 hover:theme-bg-card transition-all">
                             Watch Demo <i data-feather="play-circle" class="inline ml-1"></i>
                         </button>
                     </div>
@@ -177,7 +740,7 @@
 
                 <!-- Interactive 3D calendar container -->
                 <div class="relative" data-aos="fade-left">
-                    <div id="interactive-calendar" class="relative shadow-lg rounded-xl">
+                    <div id="interactive-calendar" class="relative theme-shadow rounded-xl">
                         <canvas id="calendar3d"></canvas>
                         <div id="whatsappBubble" class="whatsapp-bubble">Confirmed ✅</div>
                     </div>
@@ -187,55 +750,55 @@
     </div>
 
     <!-- Features Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20" id="features">
         <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4" data-aos="fade-up">Designed for Indian Businesses</h2>
-            <p class="text-lg text-gray-600 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+            <h2 class="text-3xl font-bold theme-text-primary mb-4" data-aos="fade-up">Designed for Indian Businesses</h2>
+            <p class="text-lg theme-text-secondary max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
                 Our features are tailored to the unique needs of local businesses across India
             </p>
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <!-- Feature 1 -->
-            <div class="feature-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="200">
+            <div class="feature-card p-6 rounded-xl theme-shadow" data-aos="fade-up" data-aos-delay="200">
                 <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                     <i data-feather="message-circle" class="text-orange-500 w-8 h-8"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-center mb-3">WhatsApp Integration</h3>
-                <p class="text-gray-600 text-center">
+                <h3 class="text-xl font-semibold text-center mb-3 theme-text-primary">WhatsApp Integration</h3>
+                <p class="theme-text-secondary text-center">
                     Customers can book, confirm and get reminders directly on WhatsApp - no app downloads needed.
                 </p>
             </div>
 
             <!-- Feature 2 -->
-            <div class="feature-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="300">
+            <div class="feature-card p-6 rounded-xl theme-shadow" data-aos="fade-up" data-aos-delay="300">
                 <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                     <i data-feather="credit-card" class="text-blue-500 w-8 h-8"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-center mb-3">UPI Payments</h3>
-                <p class="text-gray-600 text-center">
+                <h3 class="text-xl font-semibold text-center mb-3 theme-text-primary">UPI Payments</h3>
+                <p class="theme-text-secondary text-center">
                     Secure instant payments via UPI with automatic reconciliation for your business.
                 </p>
             </div>
 
             <!-- Feature 3 -->
-            <div class="feature-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="400">
+            <div class="feature-card p-6 rounded-xl theme-shadow" data-aos="fade-up" data-aos-delay="400">
                 <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                     <i data-feather="calendar" class="text-green-500 w-8 h-8"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-center mb-3">No-Show Protection</h3>
-                <p class="text-gray-600 text-center">
+                <h3 class="text-xl font-semibold text-center mb-3 theme-text-primary">No-Show Protection</h3>
+                <p class="theme-text-secondary text-center">
                     Automated reminders and optional deposits reduce no-shows by up to 70%.
                 </p>
             </div>
 
             <!-- Feature 4 -->
-            <div class="feature-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="500">
+            <div class="feature-card p-6 rounded-xl theme-shadow" data-aos="fade-up" data-aos-delay="500">
                 <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                     <i data-feather="layers" class="text-purple-500 w-8 h-8"></i>
                 </div>
-                <h3 class="text-xl font-semibold text-center mb-3">Industry Templates</h3>
-                <p class="text-gray-600 text-center">
+                <h3 class="text-xl font-semibold text-center mb-3 theme-text-primary">Industry Templates</h3>
+                <p class="theme-text-secondary text-center">
                     Ready-made setups for salons, clinics, tutors and 20+ other local business types.
                 </p>
             </div>
@@ -243,45 +806,45 @@
     </div>
 
     <!-- How it Works Section -->
-    <div class="bg-gradient-to-r from-orange-50 to-blue-50 py-20">
+    <div class="theme-bg-secondary py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-gray-900 mb-4" data-aos="fade-up">How MeetSetGo Works</h2>
-                <p class="text-lg text-gray-600 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                <h2 class="text-3xl font-bold theme-text-primary mb-4" data-aos="fade-up">How MeetSetGo Works</h2>
+                <p class="text-lg theme-text-secondary max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
                     Simple setup, powerful results - get started in minutes
                 </p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Step 1 -->
-                <div class="bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="200">
+                <div class="theme-bg-card p-6 rounded-xl theme-shadow theme-border" data-aos="fade-up" data-aos-delay="200">
                     <div class="flex items-center mb-4">
                         <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold mr-4">1</div>
-                        <h3 class="text-xl font-semibold">Set Up Your Profile</h3>
+                        <h3 class="text-xl font-semibold theme-text-primary">Set Up Your Profile</h3>
                     </div>
-                    <p class="text-gray-600">
+                    <p class="theme-text-secondary">
                         Choose your business type, add services, pricing, and availability. Select from our pre-made templates or customize your own.
                     </p>
                 </div>
 
                 <!-- Step 2 -->
-                <div class="bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="300">
+                <div class="theme-bg-card p-6 rounded-xl theme-shadow theme-border" data-aos="fade-up" data-aos-delay="300">
                     <div class="flex items-center mb-4">
                         <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">2</div>
-                        <h3 class="text-xl font-semibold">Share Booking Link</h3>
+                        <h3 class="text-xl font-semibold theme-text-primary">Share Booking Link</h3>
                     </div>
-                    <p class="text-gray-600">
+                    <p class="theme-text-secondary">
                         Share your unique booking link via WhatsApp, social media, or embed it on your website. Customers can book 24/7.
                     </p>
                 </div>
 
                 <!-- Step 3 -->
-                <div class="bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="400">
+                <div class="theme-bg-card p-6 rounded-xl theme-shadow theme-border" data-aos="fade-up" data-aos-delay="400">
                     <div class="flex items-center mb-4">
                         <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-4">3</div>
-                        <h3 class="text-xl font-semibold">Manage Appointments</h3>
+                        <h3 class="text-xl font-semibold theme-text-primary">Manage Appointments</h3>
                     </div>
-                    <p class="text-gray-600">
+                    <p class="theme-text-secondary">
                         Get instant notifications, automatic reminders, and secure payments. Focus on your business while we handle the scheduling.
                     </p>
                 </div>
@@ -292,8 +855,8 @@
     <!-- Testimonials Section -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4" data-aos="fade-up">Trusted by Local Businesses Across India</h2>
-            <p class="text-lg text-gray-600 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+            <h2 class="text-3xl font-bold theme-text-primary mb-4" data-aos="fade-up">Trusted by Local Businesses Across India</h2>
+            <p class="text-lg theme-text-secondary max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
                 Hear from business owners who transformed their scheduling with MeetSetGo
             </p>
         </div>
@@ -301,44 +864,44 @@
         <div class="grid md:grid-cols-3 gap-8">
             <!-- Testimonial 1 -->
             <div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="200">
-                <img src="http://static.photos/people/200x200/101" alt="Rajesh Salon Owner" class="w-24 h-24 rounded-full avatar-3d mb-4 object-cover" />
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" alt="Rajesh Salon Owner" class="w-24 h-24 rounded-full avatar-3d mb-4 object-cover" />
                 <div class="speech-bubble p-6 w-full">
-                    <p class="text-gray-700 italic mb-4">
+                    <p class="theme-text-secondary italic mb-4">
                         "Since using MeetSetGo, my salon's no-shows dropped by 80%. The WhatsApp integration is perfect for my customers."
                     </p>
                     <p class="font-semibold text-orange-500">Rajesh Kumar</p>
-                    <p class="text-sm text-gray-500">Owner, StyleCraft Salon, Delhi</p>
+                    <p class="text-sm theme-text-muted">Owner, StyleCraft Salon, Delhi</p>
                 </div>
             </div>
 
             <!-- Testimonial 2 -->
             <div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="300">
-                <img src="http://static.photos/people/200x200/102" alt="Priya Clinic Owner" class="w-24 h-24 rounded-full avatar-3d mb-4 object-cover" />
+                <img src="https://images.unsplash.com/photo-1494790108755-2616c7e4fb19?w=150&h=150&fit=crop&crop=face" alt="Priya Clinic Owner" class="w-24 h-24 rounded-full avatar-3d mb-4 object-cover" />
                 <div class="speech-bubble p-6 w-full">
-                    <p class="text-gray-700 italic mb-4">
+                    <p class="theme-text-secondary italic mb-4">
                         "The UPI payment feature saves me hours each week. Patients can now pay deposits when they book appointments."
                     </p>
                     <p class="font-semibold text-blue-500">Dr. Priya Menon</p>
-                    <p class="text-sm text-gray-500">Dentist, SmileCare Clinic, Bangalore</p>
+                    <p class="text-sm theme-text-muted">Dentist, SmileCare Clinic, Bangalore</p>
                 </div>
             </div>
 
             <!-- Testimonial 3 -->
             <div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="400">
-                <img src="http://static.photos/people/200x200/103" alt="Amit Tutor" class="w-24 h-24 rounded-full avatar-3d mb-4 object-cover" />
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" alt="Amit Tutor" class="w-24 h-24 rounded-full avatar-3d mb-4 object-cover" />
                 <div class="speech-bubble p-6 w-full">
-                    <p class="text-gray-700 italic mb-4">
+                    <p class="theme-text-secondary italic mb-4">
                         "As a home tutor, I love how parents can see my availability and book slots without endless WhatsApp messages."
                     </p>
                     <p class="font-semibold text-green-500">Amit Sharma</p>
-                    <p class="text-sm text-gray-500">Math Tutor, Mumbai</p>
+                    <p class="text-sm theme-text-muted">Math Tutor, Mumbai</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- CTA Section -->
-    <div class="bg-gradient-to-r from-orange-500 to-blue-600 py-20">
+    <div class="cta-gradient py-20" id="trial">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl md:text-4xl font-bold text-white mb-6" data-aos="fade-up">Ready to Transform Your Business?</h2>
             <p class="text-xl text-orange-100 mb-8 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
@@ -352,87 +915,133 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white pt-16 pb-8">
+    <footer class="footer theme-text-primary pt-16 pb-8" id="contact">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
                 <div class="col-span-2">
                     <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-orange-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl">MSG</div>
-                        <span class="ml-2 text-xl font-bold">MeetSetGo</span>
+                        <div class="navbar-logo-container">
+                            <img src="/logo_dark.svg" alt="MeetSetGo Logo" class="navbar-logo" />
+                        </div>
+                        <span class="ml-3 text-xl font-bold theme-text-primary">MeetSetGo</span>
                     </div>
-                    <p class="text-gray-400 mb-4">
+                    <p class="theme-text-muted mb-4">
                         Empowering India's local businesses with smart, digital-first scheduling solutions.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">
                             <i data-feather="facebook"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">
                             <i data-feather="twitter"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">
                             <i data-feather="instagram"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">
                             <i data-feather="linkedin"></i>
                         </a>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold mb-4">Product</h3>
+                    <h3 class="text-lg font-semibold mb-4 theme-text-primary">Product</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Templates</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Integrations</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Features</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Pricing</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Templates</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Integrations</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                    <h3 class="text-lg font-semibold mb-4 theme-text-primary">Resources</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Webinars</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Community</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Blog</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Help Center</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Webinars</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Community</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <h3 class="text-lg font-semibold mb-4 theme-text-primary">Company</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Careers</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">About Us</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Careers</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Contact</a></li>
+                        <li><a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <div class="text-gray-400 mb-4 md:mb-0">
-                    © 2023 MeetSetGo Technologies Pvt Ltd. All rights reserved.
+            <div class="border-t theme-border pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="theme-text-muted mb-4 md:mb-0">
+                    © 2025 MeetSetGo Technologies Pvt Ltd. All rights reserved.
                 </div>
                 <div class="flex space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">हिंदी</a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">தமிழ்</a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">తెలుగు</a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">മലയാാളം</a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors">বাংলা</a>
+                    <a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">हिंदी</a>
+                    <a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">தமிழ்</a>
+                    <a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">తెలుగు</a>
+                    <a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">മലയാാളം</a>
+                    <a href="#" class="theme-text-muted hover:theme-text-primary transition-colors">বাংলা</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Language switcher on bottom-right -->
-    <div class="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-3 flex gap-3 z-50 select-none cursor-pointer">
-        <button data-lang="en" class="lang-switch active px-3 py-1 rounded hover:bg-orange-100">English</button>
-        <button data-lang="hi" class="lang-switch px-3 py-1 rounded hover:bg-orange-100">हिंदी</button>
-        <button data-lang="ta" class="lang-switch px-3 py-1 rounded hover:bg-orange-100">தமிழ்</button>
-    </div>
+    
 
     <script>
+        // Theme Management
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.body;
+        const heroGradient = document.getElementById('heroGradient');
+
+        // Check for saved theme preference or default to 'dark'
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+
+        // Update theme toggle icon and body classes
+        function updateTheme(theme) {
+            if (theme === 'dark') {
+                themeIcon.setAttribute('data-feather', 'sun');
+                body.classList.remove('rangoli-pattern-light');
+                body.classList.add('rangoli-pattern-dark');
+                heroGradient.classList.remove('hero-gradient-light');
+                heroGradient.classList.add('hero-gradient-dark');
+            } else {
+                themeIcon.setAttribute('data-feather', 'moon');
+                body.classList.remove('rangoli-pattern-dark');
+                body.classList.add('rangoli-pattern-light');
+                heroGradient.classList.remove('hero-gradient-dark');
+                heroGradient.classList.add('hero-gradient-light');
+            }
+            feather.replace();
+        }
+
+        // Initialize theme
+        updateTheme(currentTheme);
+
+        // Theme toggle event listener
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateTheme(newTheme);
+
+            // Update Vanta.js background color if needed
+            if (window.vantaEffect) {
+                window.vantaEffect.setOptions({
+                    backgroundColor: newTheme === 'dark' ? 0x0f172a : 0xf8fafc
+                });
+            }
+        });
+
+        // Initialize AOS and Feather icons
         AOS.init({
             duration: 800,
             once: true,
@@ -440,7 +1049,7 @@
         feather.replace();
 
         // Initialize Vanta.js globe
-        VANTA.GLOBE({
+        window.vantaEffect = VANTA.GLOBE({
             el: "#vanta-globe",
             mouseControls: true,
             touchControls: true,
@@ -450,7 +1059,7 @@
             scale: 1.0,
             scaleMobile: 1.0,
             color: 0xff9933,
-            backgroundColor: 0xf8f9fa,
+            backgroundColor: currentTheme === 'dark' ? 0x0f172a : 0xf8fafc,
             size: 0.8,
         });
 
@@ -558,6 +1167,27 @@
                     document.body.style.opacity = 1;
                 }, 300);
             });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
         });
     </script>
 </body>
