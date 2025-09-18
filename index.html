@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MeetSetGo - Smart Scheduling for Local Businesses</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .rangoli-pattern {
+            background-image: radial-gradient(circle, #ff993355 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .btn-3d {
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn-3d:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .btn-3d:active {
+            transform: translateY(1px);
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+            perspective: 1000px;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+        }
+        .avatar-3d {
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        .avatar-3d:hover {
+            transform: scale(1.05) rotateY(10deg);
+        }
+        .speech-bubble {
+            position: relative;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: white transparent;
+            transform: translateX(-50%);
+        }
+
+        /* Logo shine animation */
+        @keyframes shine {
+            0% { background-position: -400px 0; }
+            100% { background-position: 400px 0; }
+        }
+        .logo-shine {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 100%;
+            animation: shine 2s linear infinite;
+        }
+
+        /* Draggable 3D calendar container */
+        #interactive-calendar {
+            width: 400px;
+            height: 300px;
+            margin: 2rem auto;
+            cursor: grab;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border-radius: 1rem;
+            background-color: white;
+            overflow: hidden;
+            position: relative;
+        }
+        #interactive-calendar canvas {
+            border-radius: 1rem;
+            display: block;
+        }
+
+        .whatsapp-bubble {
+            position: absolute;
+            background-color: #25D366;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            top: 30px;
+            left: 320px;
+            pointer-events: none;
+            user-select: none;
+            z-index: 10;
+        }
+        .whatsapp-bubble.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Language switch styling */
+        .lang-switch.active {
+            font-weight: 700;
+            background-color: #ff9933;
+            color: white;
+        }
+    </style>
+</head>
+<body class="rangoli-pattern">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                      <div class="w-10 h-10 rounded-full bg-gradient-to-r from-orange-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl relative overflow-hidden">
+                        MSG
+                        <span class="logo-shine absolute top-0 left-0 w-full h-full mix-blend-screen pointer-events-none"></span>
+                      </div>
+                      <span class="ml-2 text-xl font-bold text-gray-800">MeetSetGo</span>
+                    </div>
+                </div>
+                <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+                    <a href="#" class="text-gray-900 hover:text-orange-500 px-3 py-2 text-sm font-medium">Features</a>
+                    <a href="#" class="text-gray-900 hover:text-orange-500 px-3 py-2 text-sm font-medium">Pricing</a>
+                    <a href="#" class="text-gray-900 hover:text-orange-500 px-3 py-2 text-sm font-medium">Resources</a>
+                    <a href="#" class="text-gray-900 hover:text-orange-500 px-3 py-2 text-sm font-medium">About</a>
+                    <button class="ml-4 bg-gradient-to-r from-orange-500 to-blue-600 text-white px-4 py-2 rounded-full btn-3d font-medium">Start Free Trial</button>
+                </div>
+                <div class="-mr-2 flex items-center md:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with 3D Animation and Interactive Calendar -->
+    <div id="vanta-globe" class="relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-orange-50/50 to-blue-50/50"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
+                <div class="mb-12 lg:mb-0" data-aos="fade-right">
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                        Empowering India's Local Businesses with <span class="text-orange-500">Smart Scheduling</span>
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Transform your appointment management with our WhatsApp-first, UPI-powered scheduling solution designed for Indian SMEs.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button class="bg-gradient-to-r from-orange-500 to-blue-600 text-white px-6 py-3 rounded-full btn-3d font-medium hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                            Start Your Free Trial
+                        </button>
+                        <button class="border-2 border-orange-500 text-orange-500 px-6 py-3 rounded-full font-medium hover:bg-orange-50 transition-all">
+                            Watch Demo <i data-feather="play-circle" class="inline ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive 3D calendar container -->
+                <div class="relative" data-aos="fade-left">
+                    <div id="interactive-calendar" class="relative shadow-lg rounded-xl">
+                        <canvas id="calendar3d"></canvas>
+                        <div id="whatsappBubble" class="whatsapp-bubble">Confirmed ✅</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4" data-aos="fade-up">Designed for Indian Businesses</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                Our features are tailored to the unique needs of local businesses across India
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Feature 1 -->
+            <div class="feature-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <i data-feather="message-circle" class="text-orange-500 w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-3">WhatsApp Integration</h3>
+                <p class="text-gray-600 text-center">
+                    Customers can book, confirm and get reminders directly on WhatsApp - no app downloads needed.
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <i data-feather="credit-card" class="text-blue-500 w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-3">UPI Payments</h3>
+                <p class="text-gray-600 text-center">
+                    Secure instant payments via UPI with automatic reconciliation for your business.
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="400">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <i data-feather="calendar" class="text-green-500 w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-3">No-Show Protection</h3>
+                <p class="text-gray-600 text-center">
+                    Automated reminders and optional deposits reduce no-shows by up to 70%.
+                </p>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="feature-card bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="500">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <i data-feather="layers" class="text-purple-500 w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-3">Industry Templates</h3>
+                <p class="text-gray-600 text-center">
+                    Ready-made setups for salons, clinics, tutors and 20+ other local business types.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- How it Works Section -->
+    <div class="bg-gradient-to-r from-orange-50 to-blue-50 py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4" data-aos="fade-up">How MeetSetGo Works</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                    Simple setup, powerful results - get started in minutes
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold mr-4">1</div>
+                        <h3 class="text-xl font-semibold">Set Up Your Profile</h3>
+                    </div>
+                    <p class="text-gray-600">
+                        Choose your business type, add services, pricing, and availability. Select from our pre-made templates or customize your own.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">2</div>
+                        <h3 class="text-xl font-semibold">Share Booking Link</h3>
+                    </div>
+                    <p class="text-gray-600">
+                        Share your unique booking link via WhatsApp, social media, or embed it on your website. Customers can book 24/7.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="400">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-4">3</div>
+                        <h3 class="text-xl font-semibold">Manage Appointments</h3>
+                    </div>
+                    <p class="text-gray-600">
+                        Get instant notifications, automatic reminders, and secure payments. Focus on your business while we handle the scheduling.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4" data-aos="fade-up">Trusted by Local Businesses Across India</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                Hear from business owners who transformed their scheduling with MeetSetGo
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Testimonial 1 -->
+            <div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="200">
+                <img src="http://static.photos/people/200x200/101" alt="Rajesh Salon Owner" class="w-24 h-24 rounded-full avatar-3d mb-4 object-cover" />
+                <div class="speech-bubble p-6 w-full">
+                    <p class="text-gray-700 italic mb-4">
+                        "Since using MeetSetGo, my salon's no-shows dropped by 80%. The WhatsApp integration is perfect for my customers."
+                    </p>
+                    <p class="font-semibold text-orange-500">Rajesh Kumar</p>
+                    <p class="text-sm text-gray-500">Owner, StyleCraft Salon, Delhi</p>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="300">
+                <img src="http://static.photos/people/200x200/102" alt="Priya Clinic Owner" class="w-24 h-24 rounded-full avatar-3d mb-4 object-cover" />
+                <div class="speech-bubble p-6 w-full">
+                    <p class="text-gray-700 italic mb-4">
+                        "The UPI payment feature saves me hours each week. Patients can now pay deposits when they book appointments."
+                    </p>
+                    <p class="font-semibold text-blue-500">Dr. Priya Menon</p>
+                    <p class="text-sm text-gray-500">Dentist, SmileCare Clinic, Bangalore</p>
+                </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="400">
+                <img src="http://static.photos/people/200x200/103" alt="Amit Tutor" class="w-24 h-24 rounded-full avatar-3d mb-4 object-cover" />
+                <div class="speech-bubble p-6 w-full">
+                    <p class="text-gray-700 italic mb-4">
+                        "As a home tutor, I love how parents can see my availability and book slots without endless WhatsApp messages."
+                    </p>
+                    <p class="font-semibold text-green-500">Amit Sharma</p>
+                    <p class="text-sm text-gray-500">Math Tutor, Mumbai</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="bg-gradient-to-r from-orange-500 to-blue-600 py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6" data-aos="fade-up">Ready to Transform Your Business?</h2>
+            <p class="text-xl text-orange-100 mb-8 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                Join thousands of Indian businesses saving time and growing with MeetSetGo
+            </p>
+            <button class="bg-white text-orange-600 px-8 py-4 rounded-full btn-3d font-bold text-lg hover:bg-orange-50 transition-all transform hover:scale-105" data-aos="fade-up" data-aos-delay="200">
+                Start Your Free 14-Day Trial
+            </button>
+            <p class="text-orange-100 mt-4" data-aos="fade-up" data-aos-delay="300">No credit card required · Cancel anytime</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
+                <div class="col-span-2">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-orange-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl">MSG</div>
+                        <span class="ml-2 text-xl font-bold">MeetSetGo</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        Empowering India's local businesses with smart, digital-first scheduling solutions.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-feather="facebook"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-feather="twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-feather="instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-feather="linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Product</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Templates</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Integrations</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Webinars</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Community</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-400 mb-4 md:mb-0">
+                    © 2023 MeetSetGo Technologies Pvt Ltd. All rights reserved.
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">हिंदी</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">தமிழ்</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">తెలుగు</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">മലയാാളം</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">বাংলা</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Language switcher on bottom-right -->
+    <div class="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-3 flex gap-3 z-50 select-none cursor-pointer">
+        <button data-lang="en" class="lang-switch active px-3 py-1 rounded hover:bg-orange-100">English</button>
+        <button data-lang="hi" class="lang-switch px-3 py-1 rounded hover:bg-orange-100">हिंदी</button>
+        <button data-lang="ta" class="lang-switch px-3 py-1 rounded hover:bg-orange-100">தமிழ்</button>
+    </div>
+
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+        });
+        feather.replace();
+
+        // Initialize Vanta.js globe
+        VANTA.GLOBE({
+            el: "#vanta-globe",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.0,
+            minWidth: 200.0,
+            scale: 1.0,
+            scaleMobile: 1.0,
+            color: 0xff9933,
+            backgroundColor: 0xf8f9fa,
+            size: 0.8,
+        });
+
+        // Add ripple effect to CTA button
+        document.querySelectorAll(".btn-3d").forEach((button) => {
+            button.addEventListener("click", function (e) {
+                let x = e.clientX - e.target.getBoundingClientRect().left;
+                let y = e.clientY - e.target.getBoundingClientRect().top;
+
+                let ripple = document.createElement("span");
+                ripple.classList.add("ripple");
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 1000);
+            });
+        });
+
+        // 3D Calendar Interactive setup
+        const calendarEl = document.getElementById("interactive-calendar");
+        const whatsappBubble = document.getElementById("whatsappBubble");
+
+        let scene, camera, renderer, cube;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        function initCalendar3D() {
+            const canvas = document.getElementById("calendar3d");
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(
+                50,
+                canvas.clientWidth / canvas.clientHeight,
+                0.1,
+                1000
+            );
+            camera.position.z = 5;
+
+            renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+            // Basic box with calendar colors as faces
+            const geometry = new THREE.BoxGeometry(3, 2, 0.1);
+            const materials = [
+                new THREE.MeshBasicMaterial({ color: 0xff9933 }), // Orange
+                new THREE.MeshBasicMaterial({ color: 0x3366ff }), // Blue
+                new THREE.MeshBasicMaterial({ color: 0x228b22 }), // Green
+                new THREE.MeshBasicMaterial({ color: 0xffffff }), // White (simulated page)
+                new THREE.MeshBasicMaterial({ color: 0xffffff }),
+                new THREE.MeshBasicMaterial({ color: 0xffffff }),
+            ];
+
+            cube = new THREE.Mesh(geometry, materials);
+            scene.add(cube);
+
+            animate();
+
+            calendarEl.addEventListener("mousedown", (e) => (isDragging = true));
+            calendarEl.addEventListener("mouseup", (e) => (isDragging = false));
+            calendarEl.addEventListener("mouseleave", (e) => (isDragging = false));
+
+            calendarEl.addEventListener("mousemove", (e) => {
+                if (isDragging) {
+                    const deltaMove = {
+                        x: e.offsetX - previousMousePosition.x,
+                        y: e.offsetY - previousMousePosition.y,
+                    };
+                    cube.rotation.y += deltaMove.x * 0.01;
+                    cube.rotation.x += deltaMove.y * 0.01;
+                }
+                previousMousePosition = { x: e.offsetX, y: e.offsetY };
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        // Show WhatsApp bubble on click simulation after slight delay
+        function showWhatsAppBubble() {
+            whatsappBubble.classList.add("show");
+            setTimeout(() => {
+                whatsappBubble.classList.remove("show");
+            }, 3000);
+        }
+
+        calendarEl.addEventListener("click", showWhatsAppBubble);
+
+        initCalendar3D();
+
+        // Language switching with slide animation placeholder
+        const langButtons = document.querySelectorAll(".lang-switch");
+        langButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                langButtons.forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                const chosenLang = btn.getAttribute("data-lang");
+                document.body.style.opacity = 0;
+                setTimeout(() => {
+                    // Placeholder: replace with actual dynamic content translation logic
+                    alert("Language changed to " + chosenLang + ". Replace this with actual content update.");
+                    document.body.style.opacity = 1;
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>
